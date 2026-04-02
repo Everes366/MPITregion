@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid py-4" style="background: linear-gradient(to bottom, #F8F9FA 0%, #E9ECEF 100%); min-height: 100vh; padding: 2rem 1rem;">
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8 col-12">
+            {% if error %}
+            <div class="alert alert-danger border-0 shadow-sm mb-4 mx-auto" style="max-width: 450px;" role="alert">
+                {{ error }}
+            </div>
+            {% endif %}
+            
+            <div class="card border-0 shadow-sm mx-auto" style="max-width: 450px; border-radius: 16px; overflow: hidden;">
+                <div class="card-header bg-primary text-white text-center p-4" style="background: linear-gradient(135deg, #0052CC, #003D99) !important; border: none;">
+                    <h5 class="mb-0 fw-bold">Вход в ЭнергоДом</h5>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        <input type="hidden" name="next_url" value="{{ next_url if next_url else '' }}">
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-2" style="color: #0052CC; font-size: 0.95rem;">
+                                Логин
+                            </label>
+                            <input class="form-control mb-3" 
+                                   type="text" name="login" 
+                                   style="border: 2px solid #E3F2FD; border-radius: 10px; padding: 0.875rem 1.25rem; background: #FAFDFF;"/>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold mb-2" style="color: #0052CC; font-size: 0.95rem;">
+                                Пароль
+                            </label>
+                            <input class="form-control" 
+                                   type="password" name="password" 
+                                   style="border: 2px solid #E3F2FD; border-radius: 10px; padding: 0.875rem 1.25rem; background: #FAFDFF;"/>
+                        </div>
+                        
+                        <div class="text-end">
+                            <button class="btn btn-primary px-5 py-2 fw-semibold" type="submit" 
+                                    style="background: linear-gradient(135deg, #0052CC, #003D99); border: none; border-radius: 10px;">
+                                Войти
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+
+{% block styles %}
+:root {
+    --rt-primary: #0052CC;
+    --rt-primary-dark: #003D99;
+    --rt-bg: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+    --rt-card: #FFFFFF;
+}
+
+.card-rt {
+    background: var(--rt-card);
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(0, 82, 204, 0.15);
+    border: 1px solid #e0e0e0;
+}
+
+.btn-rt {
+    background: linear-gradient(135deg, var(--rt-primary), var(--rt-primary-dark));
+    border: none;
+    color: white;
+    border-radius: 12px;
+    padding: 0.75rem 1.75rem;
+    font-weight: 500;
+    box-shadow: 0 6px 20px rgba(0, 82, 204, 0.2);
+}
+
+.btn-rt:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(0, 82, 204, 0.35);
+}
+
+.vacuum-icon {
+    font-size: 3rem;
+    color: var(--rt-primary);
+    margin-bottom: 1rem;
+}
+
+/* Квадратная таблица с выравниванием в левый нижний угол */
+.table-rt {
+    width: 360px;
+    height: 3600px;
+    aspect-ratio: 1 / 1; /* квадратная */
+    border-radius: 12px;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 82, 204, 0.15);
+}
+
+/* Позиционирование таблицы вправо‑внизу (как угловой виджет) */
+.container-with-table {
+    position: relative;
+    height: 100%;
+}
+
+.table-rt {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: #ffffff;
+    padding: 16px;
+}
+
+.table-rt th,
+.table-rt td {
+    text-align: center;
+    padding: 8px;
+}
+
+/* Убираем пропадание фокуса, если нужно */
+@media (max-width: 576px) {
+    .table-rt {
+        position: static;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid d-flex flex-column min-vh-100">
+
+        <!-- Основной блок контрола пылесоса -->
+        <div class="card-rt p-4 card shadow mx-auto" style="max-width: 480px;">
+            <div class="text-center mb-4">
+                <i class="bi bi-robot vacuum-icon"></i>
+                <h1 class="h3 fw-bold">Робот‑пылесос Xiaomi</h1>
+                <p class="text-muted">Управление через Home Assistant</p>
+            </div>
+
+            <div class="d-flex flex-column gap-3 mt-3">
+                <button id="startBtn" class="btn btn-rt btn-lg">
+                    <i class="bi bi-play-circle me-2"></i>
+                    Начать уборку
+                </button>
+
+                <button id="stopBtn" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-pause-circle me-2"></i>
+                    Остановить
+                </button>
+
+                <button id="homeBtn" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-battery-charging me-2"></i>
+                    На зарядку
+                </button>
+            </div>
+        </div>
+
+        <!-- Кнопка "Добавить устройство" -->
+        <div class="mt-4 mx-auto" style="max-width: 480px; padding: 0;">
+            <a href="{{ url_for('vacuum_control') }}" class="btn btn-rt btn-lg w-100 px-5">
+                <i class="bi bi-thermostat me-2"></i>
+                Управление устройствами
+            </a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    const HA_URL = "https://ha.local:8123";
+    const HA_TOKEN = "ВАШ_ТОКЕН_HOME_ASSISTANT";
+    const entity_id = "vacuum.xiaomi_vacuum_...";
+    const HEADERS = {
+        "Authorization": "Bearer " + HA_TOKEN,
+        "Content-Type": "application/json"
+    };
+
+    function callHA(service, extra = {}) {
+        const data = {
+            entity_id: entity_id,
+            ...extra
+        };
+
+        fetch(`${HA_URL}/api/services/${service}`, {
+            method: "POST",
+            headers: HEADERS,
+            body: JSON.stringify(data)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Команда отправлена");
+                } else {
+                    alert("Ошибка: " + JSON.stringify(data));
+                }
+            })
+            .catch(err => {
+                console.error("Ошибка сети:", err);
+            });
+    }
+
+    document.getElementById("startBtn").addEventListener("click", () => {
+        callHA("vacuum.start");
+    });
+
+    document.getElementById("stopBtn").addEventListener("click", () => {
+        callHA("vacuum.stop");
+    });
+
+    document.getElementById("homeBtn").addEventListener("click", () => {
+        callHA("vacuum.return_to_base");
+    });
+    </script>
+{% endblock %}

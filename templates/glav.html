@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ЭнергоДом - Умный учет энергии от Ростелеком</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --rt-primary: #0052CC;
+            --rt-primary-dark: #003D99;
+            --rt-green: #00A651;
+            --rt-bg: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--rt-bg);
+            line-height: 1.6;
+        }
+        
+        /* Hero баннер Ростелеком */
+        .hero-section {
+            background: linear-gradient(135deg, var(--rt-primary) 0%, var(--rt-primary-dark) 100%);
+            color: white;
+            padding: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1.5" fill="rgba(255,255,255,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .rt-badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 500;
+            display: inline-block;
+        }
+        
+        /* Карточки услуг */
+        .service-card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,82,204,0.1);
+            transition: all 0.4s ease;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,82,204,0.2);
+        }
+        
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 25px rgba(0,82,204,0.3);
+        }
+        
+        /* Рекламные баннеры */
+        .promo-banner {
+            background: linear-gradient(135deg, var(--rt-green), #00C673);
+            border-radius: 20px;
+            padding: 2.5rem;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .promo-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        /* Кнопки Ростелеком */
+        .btn-rt-primary {
+            background: linear-gradient(135deg, var(--rt-primary), var(--rt-primary-dark));
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2.5rem;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0,82,204,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-rt-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,82,204,0.4);
+            color: white;
+        }
+        
+        .btn-rt-outline {
+            border: 2px solid var(--rt-primary);
+            color: var(--rt-primary);
+            border-radius: 12px;
+            padding: 0.875rem 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-rt-outline:hover {
+            background: var(--rt-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* Статистика */
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--rt-primary);
+        }
+        
+        /* Footer */
+        .footer-rt {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero баннер Ростелеком -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 hero-content">
+                    <div class="rt-badge mb-4">Ростелеком • Умный дом 2026</div>
+                    <h1 class="display-4 fw-bold mb-4">
+                        ЭнергоДом<br>
+                        <span class="d-inline-block">от Ростелеком</span>
+                    </h1>
+                    <p class="lead mb-4 opacity-90">
+                        Контролируйте потребление энергии в реальном времени. 
+                        Автоматически экономьте до 25% на счетах за электричество.
+                    </p>
+                    <div class="d-flex flex-column flex-sm-row gap-3">
+                        <a href="#demo" class="btn btn-rt-primary btn-lg">
+                            <i class="bi bi-play-circle me-2"></i>
+                            Посмотреть демо
+                        </a>
+                        <a href="#tariff" class="btn btn-rt-outline btn-lg">
+                            <i class="bi bi-credit-card me-2"></i>
+                            Подключить → 990₽/мес
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-6 hero-content text-center">
+                    <div class="screenshot-mockup">
+                        <img src="{{ url_for('static', filename='img/home.webp') }}" class="img-fluid rounded-3 shadow-lg" style="max-width: 350px; height: 500px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Преимущества -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-3">Почему Ростелеком ЭнергоДом?</h2>
+                    <p class="lead text-muted">Надежность оператора связи №1 в России</p>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-card text-center p-4">
+                        <div class="service-icon bg-primary text-white mb-3">
+                            <i class="bi bi-lightning-charge"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Счетчик IAMMETER</h5>
+                        <p class="text-muted">Wi-Fi мониторинг в реальном времени. Точные данные 24/7</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-card text-center p-4">
+                        <div class="service-icon bg-success text-white mb-3">
+                            <i class="bi bi-person-walking"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Автоматика света</h5>
+                        <p class="text-muted">Датчик движения Aqara Zigbee. Экономия 25% на освещении</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-card text-center p-4">
+                        <div class="service-icon bg-warning text-white mb-3">
+                            <i class="bi bi-graph-up"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Аналитика</h5>
+                        <p class="text-muted">Графики потребления. Прогноз счетов на месяц вперед</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="service-card text-center p-4">
+                        <div class="service-icon bg-info text-white mb-3">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h5 class="fw-bold mb-3">Поддержка 24/7</h5>
+                        <p class="text-muted">Единый номер 8-800 Ростелеком. Монтаж за 1 день</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Рекламный баннер -->
+    <section class="py-5">
+        <div class="container">
+            <div class="promo-banner position-relative text-center">
+                <div class="promo-badge">
+                    🔥 Лимитед оффер
+                </div>
+                <div class="row align-items-center">
+                    <div class="col-lg-8">
+                        <h2 class="display-5 fw-bold mb-3">Подключение за 1 день!</h2>
+                        <h4 class="mb-4">Только для Приморского края</h4>
+                        <div class="d-flex justify-content-center flex-wrap gap-3">
+                            <div class="text-start">
+                                <div class="stat-number mb-1">990₽</div>
+                                <div class="text-white-50">первый месяц</div>
+                            </div>
+                            <div class="vr mx-4 d-none d-lg-block"></div>
+                            <div class="text-start">
+                                <div class="stat-number mb-1">25%</div>
+                                <div class="text-white-50">экономия сразу</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 text-center">
+                        <a href="#connect" class="btn btn-light btn-lg px-5 fw-bold">
+                            <i class="bi bi-telephone me-2"></i>
+                            8-800-100-08-00
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Тарифы -->
+    <section class="py-5" id="tariff">
+        <div class="container">
+            <div class="row justify-content-center text-center mb-5">
+                <div class="col-lg-8">
+                    <h2 class="display-5 fw-bold mb-3">Выберите тариф</h2>
+                    <p class="lead text-muted">Простые и понятные цены от Ростелеком</p>
+                </div>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card text-center p-5 position-relative">
+                        <div class="service-icon bg-primary text-white mb-4" style="width: 100px; height: 100px;">
+                            <i class="bi bi-lightning-charge display-6"></i>
+                        </div>
+                        <h4 class="fw-bold mb-4">Базовый</h4>
+                        <div class="stat-number mb-4">990₽/мес</div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Счетчик IAMMETER</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Мобильный дашборд</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Поддержка 24/7</li>
+                        </ul>
+                        <a href="#connect" class="btn btn-rt-primary w-100">Подключить</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="service-card text-center p-5 position-relative border-4 border-primary">
+                        <div class="position-absolute top-0 start-50 translate-middle-x mt-n3">
+                            <div class="bg-primary text-white rounded-circle p-3 shadow-lg">
+                                <i class="bi bi-star-fill"></i>
+                            </div>
+                        </div>
+                        <div class="service-icon bg-success text-white mb-4" style="width: 100px; height: 100px;">
+                            <i class="bi bi-house-heart display-6"></i>
+                        </div>
+                        <h4 class="fw-bold mb-4">Популярный</h4>
+                        <div class="stat-number mb-4 text-success">1490₽/мес</div>
+                        <ul class="list-unstyled mb-4">
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Все из Базового</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Датчик движения</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Автоматика света</li>
+                            <li class="mb-2"><i class="bi bi-check text-success me-2"></i>Персональный менеджер</li>
+                        </ul>
+                        <a href="#connect" class="btn btn-success w-100 fw-bold">Рекомендуем</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Ростелеком -->
+    <footer class="footer-rt py-5 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-4 mb-4">
+                    <h5 class="text-white mb-3">Ростелеком ЭнергоДом</h5>
+                    <p class="text-light-50">Умный учет энергии для вашего дома. Экономьте с надежностью №1</p>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-white"><i class="bi bi-telegram fs-5"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-whatsapp fs-5"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-vk fs-5"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Услуги</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light-50">Счетчики</a></li>
+                        <li><a href="#" class="text-light-50">Автоматика</a></li>
+                        <li><a href="#" class="text-light-50">Дашборд</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h6 class="text-white mb-3">Поддержка</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-light-50">8-800-100-08-00</a></li>
+                        <li><a href="#" class="text-light-50">support@rtk.ru</a></li>
+                        <li><a href="#" class="text-light-50">Задать вопрос</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="text-white mb-3">Приморский край</h6>
+                    <p class="text-light-50 mb-3">Бесплатный монтаж<br>в день обращения</p>
+                    <a href="#connect" class="btn btn-rt-primary">Подключиться сейчас</a>
+                </div>
+            </div>
+            <hr class="my-4 opacity-25">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-light-50">&copy; 2026 Ростелеком. Все права защищены.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="text-light-50 me-4">Политика конфиденциальности</a>
+                    <a href="#" class="text-light-50">Пользовательское соглашение</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+{% endblock %}
