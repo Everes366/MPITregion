@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col">
+            {% if success %}
+            <div class="alert alert-success rt-alert border-0 shadow-sm mb-4" role="alert">
+                <i class="bi bi-check-circle me-2"></i>{{ success }}
+            </div>
+            {% endif %}
+            {% if error %}
+            <div class="alert alert-danger rt-alert border-0 shadow-sm mb-4" role="alert">
+                <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card profile-card theme-card rt-card border-0 shadow-lg">
+                <h5 class="card-header rt-header text-white">
+                    <i class="bi bi-lightning-charge me-2"></i>
+                    Прибор учета {{ mydevice.device.name }} 
+                    <span class="badge bg-light text-dark ms-2 small">
+                        {{mydevice.user_id}} / {{mydevice.device_id}}
+                    </span>
+                    <span class="float-end badge bg-success">{{mydevice.number}}</span>
+                </h5>
+                <div class="card-body p-4">
+                    <form method="post" class="mb-4">
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="form-label rt-label fw-semibold">
+                                    <i class="bi bi-tag me-1"></i>Наименование
+                                </label>
+                                <input class="form-control rt-input" type="text" name="name" 
+                                       value="{{ mydevice.device.name }}" readonly/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label rt-label fw-semibold">
+                                    <i class="bi bi-rulers me-1"></i>Измеряет
+                                </label>
+                                <input class="form-control rt-input" type="text" name="type" 
+                                       value="{{ mydevice.device.type }}" readonly/>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label rt-label fw-semibold">
+                                <i class="bi bi-hash me-1"></i>Серийный номер
+                            </label>
+                            <input class="form-control rt-input" type="text" name="number" 
+                                   value="{{ mydevice.number }}" autocomplete="off"/>
+                        </div>
+                        
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-primary rt-btn px-4 fw-semibold">
+                                <i class="bi bi-save me-2"></i>Изменить
+                            </button>
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary rt-btn px-4">
+                                <i class="bi bi-arrow-left me-2"></i>Назад
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Ростелеком стилистика - только дизайн */
+:root {
+    --rt-primary: #0052CC;
+    --rt-primary-dark: #003D99;
+    --rt-success: #28A745;
+}
+
+.rt-alert {
+    border-radius: 12px;
+    border-left: 4px solid var(--rt-primary);
+    backdrop-filter: blur(8px);
+}
+
+.rt-card {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.rt-header {
+    background: linear-gradient(135deg, var(--rt-primary), var(--rt-primary-dark));
+    border: none;
+    padding: 1.5rem 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.rt-label {
+    color: var(--rt-primary);
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+}
+
+.rt-input {
+    border: 2px solid #E3F2FD;
+    border-radius: 10px;
+    padding: 0.875rem 1rem;
+    background: #FAFDFF;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.rt-input:focus {
+    border-color: var(--rt-primary);
+    box-shadow: 0 0 0 0.25rem rgba(0, 82, 204, 0.1);
+    background: #fff;
+}
+
+.rt-btn {
+    border-radius: 10px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    border: none;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary.rt-btn {
+    background: linear-gradient(135deg, var(--rt-primary), var(--rt-primary-dark));
+    box-shadow: 0 4px 12px rgba(0, 82, 204, 0.3);
+}
+
+.btn-primary.rt-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 82, 204, 0.4);
+}
+
+.btn-outline-secondary.rt-btn {
+    border: 2px solid #DEE2E6;
+}
+
+.container { background: linear-gradient(to bottom, #F8F9FA, #E9ECEF); min-height: 100vh; }
+@media (max-width: 768px) {
+    .d-flex.gap-3 { flex-direction: column; }
+}
+</style>
+{% endblock %}

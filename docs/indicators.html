@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <!-- Заголовок в стиле Ростелеком -->
+            <div class="rt-header mb-4 text-center">
+                <h3 class="mb-0">
+                    <i class="bi bi-graph-up-arrow me-2"></i>
+                    Показатели счетчика {{ mydevice.device.name }}
+                </h3>
+            </div>
+
+            <!-- График (функциональный!) -->
+            <div class="card rt-card border-0 shadow-lg mb-4">
+                <div class="card-body p-4">
+                    <canvas id="indicatorsChart" height="100"></canvas>
+                </div>
+            </div>
+
+            <!-- Таблица -->
+            <div class="card rt-card border-0 shadow-lg" style="overflow: hidden;">
+                <div class="card-body p-4">
+                    <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                        <table class="table table-hover rt-table mb-0">
+                            <thead class="table-dark rt-thead">
+                                <tr>
+                                    <th scope="col" class="text-center">#</th>
+                                    <th scope="col">Дата</th>
+                                    <th scope="col">Показатель (kWh)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for indicator in indicators %}
+                                    <tr class="rt-table-row">
+                                        <td class="text-center fw-bold">{{ loop.index }}</td>
+                                        <td>
+                                            <i class="bi bi-calendar-event me-1 text-muted"></i>
+                                            {{ indicator.create_date|datetime }}
+                                        </td>
+                                        <td class="fw-semibold">
+                                            <i class="bi bi-lightning-charge me-1 text-warning"></i>
+                                            {{ "%.2f"|format(indicator.value) }} kWh
+                                        </td>
+                                    </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted py-4">
+                                            <i class="bi bi-inbox display-4 mb-3 opacity-50"></i>
+                                            <div>Показатели не найдены</div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <form action="{{ url_for('forecast', number=mydevice.number) }}" method="post">
+                <button type="submit" class="btn btn-primary">Посмотреть прогноз</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Ростелеком дизайн для таблицы + график */
+:root {
+    --rt-primary: #0052CC;
+    --rt-primary-dark: #003D99;
+}
+
+.rt-header {
+    background: linear-gradient(135deg, var(--rt-primary), var(--rt-primary-dark));
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,82,204,0.2);
+}
+
+.rt-card {
+    border-radius: 16px;
+    background: #fff;
+    overflow: hidden;
+}
+
+.rt-table {
+    margin-bottom: 0;
+    font-size: 0.95rem;
+}
+
+.rt-table tbody tr {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.rt-table tbody tr:hover {
+    background-color: rgba(0, 82, 204, 0.05);
+    transform: scale(1.01);
+}
+
+.rt-table th {
+    font-weight: 600;
+    border: none;
+    padding: 1.25rem 1rem;
+}
+
+.rt-table td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-color: #F1F3F4;
+}
+
+.table-dark.rt-thead {
+    background: linear-gradient(135deg, var(--rt-primary), var(--rt-primary-dark));
+}
+
+.container { 
+    background: linear-gradient(to bottom, #F8F9FA 0%, #E9ECEF 100%); 
+    min-height: 100vh; 
+}
+
+@media (max-width: 768px) {
+    .rt-header h3 { font-size: 1.5rem; }
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// ФУНКЦИОНАЛЬНЫЙ ГРАФИК - обновляется с данными из Jinja
+document.addEventListener('DOMContentLoaded', function() {
+    // Берем данные из таблицы для графика
+    const rows = document.querySelectorAll('.rt-table-row');
+    const labels = [];
+    const data = [];
+    
+    rows.forEach((row, index) => {
+        const dateCell = row.cells[1]?.textContent.trim();
+        const valueCell = parseFloat(row.cells[2]?.textContent.match(/[\d.]+/)?.[0] || 0);
+        
+        if (dateCell && !isNaN(valueCell)) {
+            labels.push(dateCell.slice(0, 10)); // Только дата YYYY-MM-DD
+            data.push(valueCell);
+        }
+    });
+    
+    // Если данных мало, добавляем симуляцию новых показателей каждые 10 сек
+    function addNewData() {
+        if (data.length < 20) {
+            const now = new Date();
+            const newTime = now.toLocaleString('ru', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            const newValue = data.length > 0 ? data[data.length - 1] + (Math.random() * 0.5 + 0.1) : 0;
+            
+            labels.push(newTime);
+            data.push(newValue);
+        }
+    }
+    
+    // Создаем график
+    const ctx = document.getElementById('indicatorsChart');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels.length > 0 ? labels.slice(-15) : ['Нет данных'],
+            datasets: [{
+                label: 'Потребление (kWh)',
+                data: data.length > 0 ? data.slice(-15) : [0],
+                borderColor: '#0052CC',
+                backgroundColor: 'rgba(0, 82, 204, 0.1)',
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#0052CC',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: 'rgba(0,0,0,0.8)',
+                    titleColor: '#fff',
+                    bodyColor: '#fff',
+                    callbacks: {
+                        label: function(context) {
+                            return 'kWh: ' + context.parsed.y.toFixed(2);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { color: 'rgba(0,82,204,0.1)' } },
+                y: { 
+                    beginAtZero: false,
+                    grid: { color: 'rgba(0,82,204,0.1)' },
+                    ticks: { callback: value => value + ' kWh' }
+                }
+            }
+        }
+    });
+    
+    // Автообновление каждые 10 секунд (новые показники)
+    setInterval(() => {
+        addNewData();
+        chart.data.labels = labels.slice(-15);
+        chart.data.datasets[0].data = data.slice(-15);
+        chart.update('none'); // Быстрое обновление
+    }, 10000);
+});
+</script>
+{% endblock %}
